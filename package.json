@@ -1,0 +1,9 @@
+{
+  "name": "blush-and-brew",
+  "version": "1.0.0",
+  "description": "Blush & Brew Luxury Cafe Landing Page & Booking",
+  "scripts": {
+    "build": "echo 'Static build ready'",
+    "start": "echo 'Serving static site'"
+  }
+}

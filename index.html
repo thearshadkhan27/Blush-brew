@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blush & Brew Café | Amravati</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#141414',
+            brandDeep: '#0D0D0D',
+            brandCard: '#1C1C1C',
+            brandCopper: '#C98F6B',
+            brandBlush: '#DE9B85',
+            brandGrey: '#BDBDBD',
+            brandMuted: '#888888',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            script: ['"Dancing Script"', 'cursive'],
+            sans: ['"Inter"', 'sans-serif'],
+          },
+          animation: {
+            'float-slow': 'floating 4s ease-in-out infinite',
+            'float-reverse': 'floatingRev 4.5s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+          },
+          keyframes: {
+            floating: {
+              '0%, 100%': { transform: 'translateY(-6px)' },
+              '50%': { transform: 'translateY(6px)' },
+            },
+            floatingRev: {
+              '0%, 100%': { transform: 'translateY(6px)' },
+              '50%': { transform: 'translateY(-6px)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.4' },
+              '50%': { opacity: '0.8' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #141414;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a2a2a;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C98F6B;
+    }
+    .text-shadow-gold {
+      text-shadow: 0 0 20px rgba(201, 143, 107, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-brandDark text-brandGrey font-sans selection:bg-brandCopper selection:text-white antialiased overflow-x-hidden relative">
+
+  <!-- Atmospheric Background Canvas (Particle Dust) -->
+  <canvas id="dustCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+  <!-- NAVBAR -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-[#141414]/90 backdrop-blur-md border-b border-white/5 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 py-3.5 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#hero" class="flex items-center gap-3 group">
+        <img src="assets/logo.jpg" alt="Blush & Brew Logo" class="w-10 h-10 rounded-full border border-brandCopper/60 object-cover shadow-md group-hover:scale-105 transition-transform duration-300">
+        <span class="font-script text-3xl font-bold text-white tracking-wide group-hover:text-brandCopper transition-colors">Blush & Brew</span>
+        <span class="text-[10px] uppercase font-semibold text-brandCopper bg-brandCopper/15 px-1.5 py-0.5 rounded tracking-widest border border-brandCopper/30">EN • ₹</span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.18em]">
+        <a href="#hero" class="text-white hover:text-brandCopper transition-colors border-b-2 border-brandCopper pb-1">Home</a>
+        <a href="#story" class="hover:text-white transition-colors pb-1">About Us</a>
+        <a href="#menu" class="hover:text-white transition-colors pb-1">Menu</a>
+        <a href="#events" class="hover:text-white transition-colors pb-1">Events</a>
+        <a href="#ingredients" class="hover:text-white transition-colors pb-1">Ingredients</a>
+        <a href="#reservation" class="hover:text-white transition-colors pb-1">Reservations</a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3">
+        <a href="tel:7387312529" title="Call Café" class="p-2 text-brandCopper hover:text-white hover:bg-white/5 rounded-full transition-colors border border-brandCopper/30">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+          </svg>
+        </a>
+        <button onclick="openReservationModal()" class="border border-brandCopper text-brandCopper hover:bg-brandCopper hover:text-white transition-all text-xs uppercase tracking-widest px-4 py-2 font-medium rounded-sm">
+          Book
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="relative z-10 pt-20">
+
+    <!-- 1. HERO SECTION -->
+    <section id="hero" class="min-h-[92vh] flex items-center px-5 sm:px-8 py-16 max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
+        
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Rating & Badge -->
+          <div class="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full">
+            <img src="assets/logo.jpg" alt="B&B Logo" class="w-6 h-6 rounded-full border border-brandCopper/50 object-cover">
+            <div class="flex items-center gap-1.5 text-xs text-white">
+              <span class="text-brandCopper">★</span>
+              <span class="font-semibold">4.4 (7)</span>
+              <span class="text-brandMuted">• Amravati</span>
+              <span class="text-brandCopper font-medium ml-1">₹200–400</span>
+            </div>
+          </div>
+
+          <!-- Script Tagline -->
+          <p class="font-script text-3xl sm:text-4xl text-brandCopper font-bold">
+            Sip the blush, brew the love
+          </p>
+
+          <!-- Serif Headline -->
+          <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.12]">
+            A Premium<br>
+            And Aesthetic<br>
+            Coffee Haven
+          </h1>
+
+          <!-- Body Description -->
+          <p class="text-brandGrey text-sm sm:text-base max-w-xl leading-relaxed">
+            Rooted in Vijay Colony, Amravati. Step into our dark atmospheric sanctuary for handcrafted single-origin coffees, warm skillet delicacies, and artisanal desserts.
+          </p>
+
+          <!-- Buttons -->
+          <div class="pt-4 flex flex-wrap gap-4 items-center">
+            <button onclick="openReservationModal()" class="border border-white/80 hover:bg-white hover:text-brandDark transition-all text-xs uppercase tracking-[0.2em] px-7 py-3.5 font-medium rounded-sm">
+              Book A Table
+            </button>
+            <button onclick="openMenuModal()" class="border border-brandCopper text-brandCopper hover:bg-brandCopper hover:text-white transition-all text-xs uppercase tracking-[0.2em] px-7 py-3.5 font-medium rounded-sm">
+              Explore Menu
+            </button>
+          </div>
+
+          <!-- Quick Highlights -->
+          <div class="pt-6 grid grid-cols-3 gap-4 border-t border-white/10 max-w-md">
+            <div>
+              <p class="text-white font-serif text-lg font-bold">100%</p>
+              <p class="text-[11px] text-brandMuted">Arabica Roast</p>
+            </div>
+            <div>
+              <p class="text-white font-serif text-lg font-bold">Fresh</p>
+              <p class="text-[11px] text-brandMuted">Daily Bakery</p>
+            </div>
+            <div>
+              <p class="text-white font-serif text-lg font-bold">Live</p>
+              <p class="text-[11px] text-brandMuted">Weekend Music</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Hero Visual (Large Cutout Plate) -->
+        <div class="lg:col-span-5 flex justify-center relative">
+          <div class="relative w-72 sm:w-96 aspect-square">
+            
+            <!-- Radial Glow -->
+            <div class="absolute inset-0 bg-brandCopper/20 rounded-full blur-3xl -z-10 animate-pulse-glow"></div>
+            
+            <!-- Main Hero Cutout -->
+            <img src="assets/hero_dish.jpg" alt="Signature Brew and Skillet Dessert" class="w-full h-full object-cover rounded-full border border-white/20 shadow-2xl animate-float-slow">
+            
+            <!-- Floating Decorative Badges -->
+            <div class="absolute -top-3 -right-2 bg-brandCard/90 border border-brandCopper/40 backdrop-blur-sm px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs text-brandBlush shadow-lg animate-float-reverse">
+              <span>☕</span>
+              <span class="font-medium text-[11px]">Chikmagalur Roast</span>
+            </div>
+
+            <div class="absolute -bottom-3 -left-2 bg-brandCard/90 border border-white/20 backdrop-blur-sm px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs text-white shadow-lg animate-float-slow">
+              <span>🌸</span>
+              <span class="font-medium text-[11px]">Damask Rose Infusion</span>
+            </div>
+
+            <div class="absolute bottom-12 -right-4 bg-brandCard/90 border border-brandCopper/30 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1.5 text-[10px] text-brandCopper shadow-lg">
+              <span>✨</span>
+              <span>Ceylon Spice Dust</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. OUR STORY SECTION -->
+    <section id="story" class="py-20 px-5 sm:px-8 max-w-6xl mx-auto">
+      <div class="bg-white rounded-sm overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-12 border border-white/10 group">
+        
+        <!-- Left Photo Panel -->
+        <div class="md:col-span-6 relative min-h-[300px] md:min-h-[420px] overflow-hidden">
+          <img src="assets/interior.jpg" alt="Blush & Brew Ambiance" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-black/25"></div>
+          <div class="absolute bottom-4 left-4 bg-brandDark/90 backdrop-blur border border-brandCopper/40 text-brandCopper text-xs px-3 py-1.5 rounded flex items-center gap-2">
+            <span>🌿</span>
+            <span>Vijay Colony, Amravati</span>
+          </div>
+        </div>
+
+        <!-- Right White Panel -->
+        <div class="md:col-span-6 p-8 sm:p-12 flex flex-col justify-between bg-white text-brandDark">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-script text-3xl font-bold text-brandCopper">Discover</span>
+              <img src="assets/logo.jpg" alt="B&B Seal" class="w-12 h-12 rounded-full border border-brandCopper/40 object-cover shadow-sm">
+            </div>
+
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">
+              Our Story
+            </h2>
+
+            <p class="text-[#555555] text-sm leading-relaxed mb-4">
+              Get the true coffee and dessert experience at Blush & Brew. Whether you're joining us for a romantic evening, a business meeting, a quiet study corner, or gathering with friends, our baristas craft superior brews and warm pastries for an unforgettable cafe experience in Amravati.
+            </p>
+
+            <p class="text-[#666666] text-xs leading-relaxed">
+              Every bean is sustainably sourced from high-altitude estates, stone-ground, and prepared with unwavering attention to flavour, texture, and soul.
+            </p>
+          </div>
+
+          <div class="pt-6">
+            <button onclick="openStoryModal()" class="text-brandCopper hover:text-brandDark transition-colors font-bold text-sm tracking-wide inline-flex items-center gap-1.5">
+              More About Us <span>→</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. OUR MENU SECTION -->
+    <section id="menu" class="py-20 px-5 sm:px-8 max-w-6xl mx-auto">
+      
+      <!-- Section Header -->
+      <div class="mb-16">
+        <span class="font-script text-3xl text-brandCopper font-bold block mb-1">Discover</span>
+        <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white mb-4">Our Menu</h2>
+        <p class="text-brandGrey text-sm sm:text-base max-w-2xl leading-relaxed">
+          Few things come close to the joy of fresh roasted beans and warm oven delicacies — cooked simply with tender, loving care. Rest assured our baristas and pastry chefs treat each creation with the respect it deserves.
+        </p>
+      </div>
+
+      <!-- Zig-Zag Layout (3 Plates) -->
+      <div class="space-y-16">
+        
+        <!-- Plate 1: Left Image, Right Text -->
+        <div class="flex flex-col sm:flex-row items-center gap-8 sm:gap-12">
+          <div class="w-48 sm:w-56 aspect-square shrink-0 relative">
+            <img src="assets/savory.jpg" alt="Appetizer" class="w-full h-full object-cover rounded-full border border-white/20 shadow-2xl hover:scale-105 transition-transform duration-500">
+          </div>
+          <div class="space-y-2 text-center sm:text-left">
+            <span class="font-script text-2xl text-brandCopper font-bold block">Appetizer</span>
+            <h3 class="font-serif text-2xl font-bold text-white">Gourmet Avocado Toast</h3>
+            <p class="text-brandGrey text-sm max-w-md">Start with our artisan sourdough bread with egg, Haas avocado, and sea salt flakes.</p>
+            <p class="text-brandCopper font-serif font-bold text-lg pt-1">₹260</p>
+          </div>
+        </div>
+
+        <!-- Plate 2: Right Image, Left Text (Zig-Zag) -->
+        <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-8 sm:gap-12">
+          <div class="space-y-2 text-center sm:text-right">
+            <span class="font-script text-2xl text-brandCopper font-bold block">Artisanal Brew</span>
+            <h3 class="font-serif text-2xl font-bold text-white">Signature Rose Velvet Latte</h3>
+            <p class="text-brandGrey text-sm max-w-md ml-auto">Our handcrafted Chikmagalur double-shot espresso blended with Damask rose micro-foam.</p>
+            <p class="text-brandCopper font-serif font-bold text-lg pt-1">₹220</p>
+          </div>
+          <div class="w-48 sm:w-56 aspect-square shrink-0 relative">
+            <img src="assets/hero_dish.jpg" alt="Artisanal Brew" class="w-full h-full object-cover rounded-full border border-white/20 shadow-2xl hover:scale-105 transition-transform duration-500">
+          </div>
+        </div>
+
+        <!-- Plate 3: Left Image, Right Text -->
+        <div class="flex flex-col sm:flex-row items-center gap-8 sm:gap-12">
+          <div class="w-48 sm:w-56 aspect-square shrink-0 relative">
+            <img src="assets/dessert.jpg" alt="Dessert" class="w-full h-full object-cover rounded-full border border-white/20 shadow-2xl hover:scale-105 transition-transform duration-500">
+          </div>
+          <div class="space-y-2 text-center sm:text-left">
+            <span class="font-script text-2xl text-brandCopper font-bold block">Dessert</span>
+            <h3 class="font-serif text-2xl font-bold text-white">Lotus Biscoff Burnt Cheesecake</h3>
+            <p class="text-brandGrey text-sm max-w-md">Finish your cafe experience with our oven-baked Basque cheesecake drizzled in caramel.</p>
+            <p class="text-brandCopper font-serif font-bold text-lg pt-1">₹280</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Outlined Button for Full Menu -->
+      <div class="text-center pt-16">
+        <button onclick="openMenuModal()" class="border border-white/80 hover:bg-white hover:text-brandDark transition-all text-xs uppercase tracking-[0.2em] px-8 py-3.5 font-medium rounded-sm">
+          Explore Full Menu
+        </button>
+      </div>
+
+    </section>
+
+    <!-- 4. UPCOMING EVENTS SECTION -->
+    <section id="events" class="py-20 px-5 sm:px-8 max-w-6xl mx-auto">
+      <div class="bg-white rounded-sm overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-12 border border-white/10 group">
+        
+        <!-- Left Photo -->
+        <div class="md:col-span-6 relative min-h-[280px] md:min-h-[380px] overflow-hidden">
+          <img src="assets/interior.jpg" alt="Upcoming Events" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-black/30"></div>
+          <div class="absolute bottom-4 left-4 bg-brandDark/90 backdrop-blur border border-brandCopper/40 text-brandCopper text-xs px-3 py-1.5 rounded flex items-center gap-2">
+            <span>🎶</span>
+            <span>Live Acoustic Experience</span>
+          </div>
+        </div>
+
+        <!-- Right White Panel -->
+        <div class="md:col-span-6 p-8 sm:p-12 flex flex-col justify-between bg-white text-brandDark">
+          <div>
+            <span class="font-script text-3xl font-bold text-brandCopper block mb-1">Discover</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">Upcoming Events</h2>
+            
+            <p class="text-[#555555] text-sm leading-relaxed mb-6">
+              Not only can you get the best handcrafted brews in Amravati, you can gather with your favorite crowd while enjoying curated acoustic evenings and barista brewing workshops.
+            </p>
+
+            <!-- Event Highlight Box -->
+            <div class="bg-gray-50 border border-gray-200 p-4 rounded-sm mb-4">
+              <h4 class="font-serif font-bold text-base text-[#1a1a1a]">Acoustic Sunset Sessions</h4>
+              <p class="text-brandCopper font-medium text-xs tracking-wider uppercase pt-1">
+                Every Saturday • 7:00 PM • Live Music & Coffee
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-4 flex items-center justify-between">
+            <button onclick="openReservationModal('Acoustic Sunset Sessions')" class="text-brandCopper hover:text-brandDark transition-colors font-bold text-sm tracking-wide inline-flex items-center gap-1.5">
+              Reserve Seat For Event <span>→</span>
+            </button>
+            <span class="text-xl">🥄</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. THE BEST INGREDIENTS SECTION -->
+    <section id="ingredients" class="py-20 px-5 sm:px-8 max-w-6xl mx-auto text-center">
+      
+      <span class="font-script text-3xl text-brandCopper font-bold block mb-1">Discover</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white mb-4">The Best Ingredients</h2>
+      
+      <p class="text-brandGrey text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-16">
+        We take an enormous amount of pride in sourcing our ingredients carefully to ensure that the flavors of our beverages and pastries are authentic and soul-soothing.
+      </p>
+
+      <!-- Row of Raw Ingredient Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        
+        <div class="bg-brandCard border border-brandCopper/40 p-4 rounded-md hover:border-brandCopper transition-all hover:-translate-y-1">
+          <div class="w-12 h-12 mx-auto rounded-full bg-white/5 border border-brandCopper/30 flex items-center justify-center text-2xl mb-3">☕</div>
+          <h4 class="font-serif text-xs font-bold text-white mb-1">Single-Origin Arabica</h4>
+          <p class="text-[10px] text-brandCopper mb-1">Chikmagalur</p>
+          <p class="text-[10px] text-brandMuted leading-tight">Shade-grown beans with roasted hazelnut notes.</p>
+        </div>
+
+        <div class="bg-brandCard border border-white/10 p-4 rounded-md hover:border-brandCopper transition-all hover:-translate-y-1">
+          <div class="w-12 h-12 mx-auto rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-2xl mb-3">🌿</div>
+          <h4 class="font-serif text-xs font-bold text-white mb-1">Ceylon Cinnamon</h4>
+          <p class="text-[10px] text-brandCopper mb-1">Sri Lanka</p>
+          <p class="text-[10px] text-brandMuted leading-tight">Hand-rolled true quills for spiced notes.</p>
+        </div>
+
+        <div class="bg-brandCard border border-white/10 p-4 rounded-md hover:border-brandCopper transition-all hover:-translate-y-1">
+          <div class="w-12 h-12 mx-auto rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-2xl mb-3">✨</div>
+          <h4 class="font-serif text-xs font-bold text-white mb-1">Bourbon Vanilla</h4>
+          <p class="text-[10px] text-brandCopper mb-1">Madagascar</p>
+          <p class="text-[10px] text-brandMuted leading-tight">Pure whole aromatic pods scraped fresh.</p>
+        </div>
+
+        <div class="bg-brandCard border border-white/10 p-4 rounded-md hover:border-brandCopper transition-all hover:-translate-y-1">
+          <div class="w-12 h-12 mx-auto rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-2xl mb-3">🍫</div>
+          <h4 class="font-serif text-xs font-bold text-white mb-1">Belgian Cocoa</h4>
+          <p class="text-[10px] text-brandCopper mb-1">Callebaut</p>
+          <p class="text-[10px] text-brandMuted leading-tight">70% dark single origin chocolate.</p>
+        </div>
+
+        <div class="bg-brandCard border border-white/10 p-4 rounded-md hover:border-brandCopper transition-all hover:-translate-y-1">
+          <div class="w-12 h-12 mx-auto rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-2xl mb-3">🌸</div>
+          <h4 class="font-serif text-xs font-bold text-white mb-1">Damask Rose</h4>
+          <p class="text-[10px] text-brandCopper mb-1">Kannauj</p>
+          <p class="text-[10px] text-brandMuted leading-tight">Organic distilled floral rose essence.</p>
+        </div>
+
+        <div class="bg-brandCard border border-white/10 p-4 rounded-md hover:border-brandCopper transition-all hover:-translate-y-1">
+          <div class="w-12 h-12 mx-auto rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-2xl mb-3">🥛</div>
+          <h4 class="font-serif text-xs font-bold text-white mb-1">Farmstead Dairy</h4>
+          <p class="text-[10px] text-brandCopper mb-1">Local Farms</p>
+          <p class="text-[10px] text-brandMuted leading-tight">Silky micro-foam with natural sweetness.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 6. BOOK YOUR TABLE BANNER SECTION -->
+    <section id="reservation" class="relative py-28 px-5 sm:px-8 overflow-hidden text-center">
+      <img src="assets/interior.jpg" alt="Interior Banner" class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-b from-brandDark/85 via-brandDark/90 to-brandDark"></div>
+      
+      <div class="relative z-10 max-w-xl mx-auto space-y-4">
+        <span class="font-script text-4xl text-brandCopper font-bold block">Reservation</span>
+        <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white">Book Your Table</h2>
+        <p class="text-brandGrey text-sm">Reserve your preferred aesthetic corner for coffee, dates, or cozy gatherings.</p>
+        
+        <div class="pt-6">
+          <button onclick="openReservationModal()" class="border border-white hover:bg-white hover:text-brandDark transition-all text-xs uppercase tracking-[0.2em] px-8 py-3.5 font-medium rounded-sm">
+            Online Booking
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. GUEST REVIEWS & VIBES SECTION -->
+    <section class="py-20 px-5 sm:px-8 max-w-6xl mx-auto">
+      
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+        <div>
+          <span class="font-script text-3xl text-brandCopper font-bold block mb-1">Discover</span>
+          <h2 class="font-serif text-4xl font-bold text-white">Guest Reviews & Vibe</h2>
+        </div>
+        <div class="bg-brandCard border border-white/10 px-5 py-3 rounded-md flex items-center gap-4">
+          <div>
+            <p class="font-serif text-2xl font-bold text-white">4.4 ★</p>
+            <p class="text-[11px] text-brandMuted">7 Google Reviews</p>
+          </div>
+          <div class="border-l border-white/10 pl-4 text-right">
+            <p class="text-brandCopper font-bold text-sm">₹200–400</p>
+            <p class="text-[11px] text-brandMuted">Per Person</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="bg-brandCard border border-white/10 p-6 rounded-md space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-sm">Tanvi K.</span>
+            <span class="text-brandCopper text-xs">★★★★★</span>
+          </div>
+          <p class="text-brandGrey text-xs leading-relaxed">
+            "Absolute gem in Amravati! The dark aesthetic ambiance is so calming and luxurious. The Signature Rose Latte and Biscoff Cheesecake are out of this world."
+          </p>
+          <p class="text-[11px] text-brandCopper pt-2">Loved: Signature Rose Velvet Latte</p>
+        </div>
+
+        <div class="bg-brandCard border border-white/10 p-6 rounded-md space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-sm">Aditya Deshmukh</span>
+            <span class="text-brandCopper text-xs">★★★★½</span>
+          </div>
+          <p class="text-brandGrey text-xs leading-relaxed">
+            "Best coffee spot near Pote College road. Super aesthetic interiors, great crowd, and the avocado sourdough toast is fresh and delicious. Highly recommend!"
+          </p>
+          <p class="text-[11px] text-brandCopper pt-2">Loved: Gourmet Avocado Toast</p>
+        </div>
+
+        <div class="bg-brandCard border border-white/10 p-6 rounded-md space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-sm">Pooja W.</span>
+            <span class="text-brandCopper text-xs">★★★★★</span>
+          </div>
+          <p class="text-brandGrey text-xs leading-relaxed">
+            "Sip the blush, brew the love is truly their motto! Amazing desserts and warm hospitable staff. Perfect spot for quiet work or evening dates."
+          </p>
+          <p class="text-[11px] text-brandCopper pt-2">Loved: Lotus Biscoff Cheesecake</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 8. FOOTER SECTION (3 COLUMNS) -->
+    <footer id="contact" class="bg-brandDeep border-t border-white/10 pt-16 pb-12 px-5 sm:px-8">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+        
+        <!-- Column 1: Location -->
+        <div class="space-y-3">
+          <span class="font-script text-2xl font-bold text-brandCopper block">Location</span>
+          <p class="text-sm text-brandGrey leading-relaxed">
+            XQ94+6CF, Vijay Colony, Pote College Road<br>
+            Near Orchid Bakery, Amravati<br>
+            Maharashtra 444604
+          </p>
+          <a href="https://www.google.com/maps/search/?api=1&query=Blush+%26+brew+Vijay+Colony+Amravati" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-bold text-brandCopper hover:text-white transition-colors pt-2">
+            Open in Google Maps <span>→</span>
+          </a>
+        </div>
+
+        <!-- Column 2: Working Hours -->
+        <div class="space-y-3">
+          <span class="font-script text-2xl font-bold text-brandCopper block">Working Hours</span>
+          <div class="space-y-2 text-sm text-brandGrey">
+            <div class="flex justify-between border-b border-white/5 pb-1">
+              <span>Monday – Thursday</span>
+              <span class="text-white">9:00 am – 11:00 pm</span>
+            </div>
+            <div class="flex justify-between border-b border-white/5 pb-1">
+              <span>Friday</span>
+              <span class="text-white">9:00 am – 11:30 pm</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Saturday – Sunday</span>
+              <span class="text-white">9:00 am – 11:30 pm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3: Brand & Contact -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <img src="assets/logo.jpg" alt="Logo" class="w-11 h-11 rounded-full border border-brandCopper/50 object-cover">
+            <div>
+              <span class="font-script text-3xl font-bold text-white block leading-none">Blush & Brew</span>
+              <span class="text-[11px] text-brandCopper">Sip the blush. Brew the love ☕</span>
+            </div>
+          </div>
+          
+          <div class="space-y-1.5 text-xs text-brandGrey pt-2">
+            <p>
+              <a href="tel:7387312529" class="hover:text-brandCopper transition-colors flex items-center gap-2">
+                <span>📞</span> +91 7387312529
+              </a>
+            </p>
+            <p>
+              <a href="mailto:blushandbrew.cafe@gmail.com" class="hover:text-brandCopper transition-colors flex items-center gap-2">
+                <span>✉️</span> blushandbrew.cafe@gmail.com
+              </a>
+            </p>
+            <p>
+              <a href="https://instagram.com/blushandbrew.cafe" target="_blank" rel="noopener" class="hover:text-brandCopper transition-colors flex items-center gap-2">
+                <span>📸</span> @blushandbrew.cafe
+              </a>
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="max-w-6xl mx-auto pt-8 border-t border-white/5 text-center text-xs text-brandMuted">
+        © 2026 Blush & Brew Café. All rights reserved.
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- RESERVATION MODAL -->
+  <div id="reservationModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-brandDark border border-white/15 rounded-md max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative">
+      
+      <button onclick="closeReservationModal()" class="absolute top-4 right-4 text-brandMuted hover:text-white text-xl">✕</button>
+
+      <span class="font-script text-2xl text-brandCopper font-bold block mb-1">Reservation</span>
+      <h3 id="resModalTitle" class="font-serif text-2xl font-bold text-white mb-6">Book Your Table</h3>
+
+      <div id="resFormContent" class="space-y-5">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-brandMuted mb-2">1. Select Date</label>
+          <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 text-xs">
+            <button type="button" onclick="selectDate(this, 'Today')" class="date-btn border border-brandCopper bg-brandCopper/20 text-brandCopper py-2 rounded">Today</button>
+            <button type="button" onclick="selectDate(this, 'Tomorrow')" class="date-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">Tomorrow</button>
+            <button type="button" onclick="selectDate(this, 'Friday')" class="date-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">Friday</button>
+            <button type="button" onclick="selectDate(this, 'Saturday')" class="date-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">Saturday</button>
+            <button type="button" onclick="selectDate(this, 'Sunday')" class="date-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">Sunday</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-brandMuted mb-2">2. Time Slot</label>
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <button type="button" onclick="selectTime(this, '11:30 AM')" class="time-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">11:30 AM</button>
+            <button type="button" onclick="selectTime(this, '1:30 PM')" class="time-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">1:30 PM</button>
+            <button type="button" onclick="selectTime(this, '4:30 PM')" class="time-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">4:30 PM</button>
+            <button type="button" onclick="selectTime(this, '7:00 PM')" class="time-btn border border-brandCopper bg-brandCopper/20 text-brandCopper py-2 rounded">7:00 PM</button>
+            <button type="button" onclick="selectTime(this, '8:30 PM')" class="time-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">8:30 PM</button>
+            <button type="button" onclick="selectTime(this, '9:45 PM')" class="time-btn border border-white/20 text-white py-2 rounded hover:border-brandCopper">9:45 PM</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-brandMuted mb-2">3. Number of Guests</label>
+          <div class="flex gap-2">
+            <button type="button" onclick="selectGuests(this, 1)" class="guest-btn w-10 h-10 border border-white/20 text-white rounded text-xs">1</button>
+            <button type="button" onclick="selectGuests(this, 2)" class="guest-btn w-10 h-10 border border-brandCopper bg-brandCopper/20 text-brandCopper rounded text-xs font-bold">2</button>
+            <button type="button" onclick="selectGuests(this, 3)" class="guest-btn w-10 h-10 border border-white/20 text-white rounded text-xs">3</button>
+            <button type="button" onclick="selectGuests(this, 4)" class="guest-btn w-10 h-10 border border-white/20 text-white rounded text-xs">4</button>
+            <button type="button" onclick="selectGuests(this, 5)" class="guest-btn w-10 h-10 border border-white/20 text-white rounded text-xs">5</button>
+            <button type="button" onclick="selectGuests(this, 6)" class="guest-btn w-10 h-10 border border-white/20 text-white rounded text-xs">6+</button>
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <input type="text" id="guestName" placeholder="Your Full Name" class="w-full bg-brandCard border border-white/20 rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brandCopper">
+          <input type="tel" id="guestPhone" placeholder="Phone Number (e.g. 7387312529)" class="w-full bg-brandCard border border-white/20 rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brandCopper">
+          <input type="text" id="specialNote" placeholder="Special Request (e.g. candle setup, quiet spot)" class="w-full bg-brandCard border border-white/20 rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brandCopper">
+        </div>
+
+        <button onclick="confirmBooking()" class="w-full bg-brandCopper hover:bg-brandCopper/90 text-white font-medium py-3 rounded text-xs uppercase tracking-widest transition-colors mt-2">
+          Confirm Reservation
+        </button>
+      </div>
+
+      <!-- Success Confirmation State -->
+      <div id="resSuccessContent" class="hidden text-center py-6 space-y-4">
+        <div class="w-16 h-16 mx-auto rounded-full border-2 border-brandCopper flex items-center justify-center text-3xl text-brandCopper">✓</div>
+        <h4 class="font-serif text-2xl font-bold text-white">Table Reserved!</h4>
+        <p class="text-brandCopper text-xs tracking-wider" id="bookingRef">REF: BNB-8492</p>
+        <div class="bg-brandCard p-4 rounded text-left text-xs space-y-1.5 text-brandGrey border border-white/10">
+          <p><span class="text-white font-semibold">Guest:</span> <span id="confName"></span></p>
+          <p><span class="text-white font-semibold">Date & Time:</span> <span id="confDateTime"></span></p>
+          <p><span class="text-white font-semibold">Guests:</span> <span id="confGuests"></span></p>
+          <p><span class="text-white font-semibold">Location:</span> Vijay Colony, Amravati</p>
+        </div>
+        <button onclick="closeReservationModal()" class="w-full border border-white/40 text-white py-2.5 rounded text-xs uppercase tracking-widest hover:bg-white hover:text-brandDark transition-colors">
+          Done
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FULL MENU MODAL -->
+  <div id="menuModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-brandDark border border-white/15 rounded-md max-w-2xl w-full max-h-[88vh] flex flex-col p-6 sm:p-8 relative">
+      
+      <button onclick="closeMenuModal()" class="absolute top-4 right-4 text-brandMuted hover:text-white text-xl">✕</button>
+
+      <span class="font-script text-2xl text-brandCopper font-bold block mb-1">Discover</span>
+      <h3 class="font-serif text-2xl font-bold text-white mb-4">Artisanal Café Menu</h3>
+
+      <!-- Categories Filter -->
+      <div class="flex gap-2 overflow-x-auto pb-3 mb-4 text-xs shrink-0">
+        <button onclick="filterMenu('all', this)" class="menu-tab-btn border border-brandCopper bg-brandCopper/20 text-brandCopper px-3 py-1.5 rounded whitespace-nowrap">All Items</button>
+        <button onclick="filterMenu('coffee', this)" class="menu-tab-btn border border-white/20 text-white px-3 py-1.5 rounded whitespace-nowrap hover:border-brandCopper">Specialty Coffee</button>
+        <button onclick="filterMenu('dessert', this)" class="menu-tab-btn border border-white/20 text-white px-3 py-1.5 rounded whitespace-nowrap hover:border-brandCopper">Desserts</button>
+        <button onclick="filterMenu('savory', this)" class="menu-tab-btn border border-white/20 text-white px-3 py-1.5 rounded whitespace-nowrap hover:border-brandCopper">Savory Bites</button>
+      </div>
+
+      <!-- Menu Items List -->
+      <div id="menuItemsContainer" class="overflow-y-auto space-y-3.5 pr-2 flex-1">
+        <!-- Javascript fills items here -->
+      </div>
+
+      <div class="pt-4 border-t border-white/10 text-center text-[11px] text-brandMuted">
+        * Freshly roasted & baked in-house daily • Price ₹200–400 per person
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ABOUT US STORY MODAL -->
+  <div id="storyModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-brandDark border border-white/15 rounded-md max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 relative">
+      <button onclick="closeStoryModal()" class="absolute top-4 right-4 text-brandMuted hover:text-white text-xl">✕</button>
+
+      <span class="font-script text-2xl text-brandCopper font-bold block mb-1">Discover</span>
+      <h3 class="font-serif text-2xl font-bold text-white mb-4">The Blush & Brew Story</h3>
+      
+      <img src="assets/interior.jpg" alt="Interior" class="w-full h-44 object-cover rounded mb-4 border border-white/10">
+
+      <h4 class="font-serif text-brandCopper font-semibold text-lg mb-2">A Sanctuary for Coffee & Soul in Amravati</h4>
+      <p class="text-sm text-brandGrey leading-relaxed mb-3">
+        Situated on Pote College Road in Vijay Colony, near Orchid Bakery, Blush & Brew was imagined as an antidote to noisy, rushed chain cafes. We crafted an intimate space where deep charcoal aesthetics, warm amber illumination, and the fragrant steam of specialty Arabica unite into a soothing haven.
+      </p>
+      <p class="text-sm text-brandGrey leading-relaxed mb-6">
+        Our name reflects our commitment: <em>'Blush'</em> for heartfelt moments, floral notes, and blushing sweetness; <em>'Brew'</em> for precise extraction and unhurried craftsmanship.
+      </p>
+
+      <button onclick="closeStoryModal()" class="w-full border border-white/30 text-white py-2.5 rounded text-xs uppercase tracking-widest hover:bg-white hover:text-brandDark transition-colors">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Interaction Logic -->
+  <script>
+    // Particle Dust Canvas Animation
+    (function initDust() {
+      const canvas = document.getElementById('dustCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      for (let i = 0; i < 45; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.8 + 0.6,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          color: Math.random() > 0.7 ? '#C98F6B' : '#FFFFFF',
+          alpha: Math.random() * 0.5 + 0.1
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let p of particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // Reservation State
+    let selectedDateVal = "Today";
+    let selectedTimeVal = "7:00 PM";
+    let selectedGuestsVal = 2;
+
+    function openReservationModal(eventTitle) {
+      document.getElementById('reservationModal').classList.remove('hidden');
+      document.getElementById('resFormContent').classList.remove('hidden');
+      document.getElementById('resSuccessContent').classList.add('hidden');
+      if (eventTitle) {
+        document.getElementById('resModalTitle').innerText = "Reserve for " + eventTitle;
+      } else {
+        document.getElementById('resModalTitle').innerText = "Book Your Table";
+      }
+    }
+
+    function closeReservationModal() {
+      document.getElementById('reservationModal').classList.add('hidden');
+    }
+
+    function selectDate(btn, date) {
+      selectedDateVal = date;
+      document.querySelectorAll('.date-btn').forEach(b => {
+        b.classList.remove('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper');
+        b.classList.add('border-white/20', 'text-white');
+      });
+      btn.classList.add('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper');
+      btn.classList.remove('border-white/20', 'text-white');
+    }
+
+    function selectTime(btn, time) {
+      selectedTimeVal = time;
+      document.querySelectorAll('.time-btn').forEach(b => {
+        b.classList.remove('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper');
+        b.classList.add('border-white/20', 'text-white');
+      });
+      btn.classList.add('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper');
+      btn.classList.remove('border-white/20', 'text-white');
+    }
+
+    function selectGuests(btn, count) {
+      selectedGuestsVal = count;
+      document.querySelectorAll('.guest-btn').forEach(b => {
+        b.classList.remove('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper', 'font-bold');
+        b.classList.add('border-white/20', 'text-white');
+      });
+      btn.classList.add('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper', 'font-bold');
+      btn.classList.remove('border-white/20', 'text-white');
+    }
+
+    function confirmBooking() {
+      const name = document.getElementById('guestName').value.trim();
+      const phone = document.getElementById('guestPhone').value.trim();
+
+      if (!name) {
+        alert("Please enter your name.");
+        return;
+      }
+      if (!phone || phone.length < 6) {
+        alert("Please enter a valid phone number.");
+        return;
+      }
+
+      const refId = "BNB-" + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('bookingRef').innerText = "REFERENCE: " + refId;
+      document.getElementById('confName').innerText = name + " (" + phone + ")";
+      document.getElementById('confDateTime').innerText = selectedDateVal + " at " + selectedTimeVal;
+      document.getElementById('confGuests').innerText = selectedGuestsVal + " Guests (Window Corner)";
+
+      document.getElementById('resFormContent').classList.add('hidden');
+      document.getElementById('resSuccessContent').classList.remove('hidden');
+    }
+
+    // Menu Modal Data
+    const menuItems = [
+      { id: 1, name: "Signature Rose Velvet Latte", cat: "coffee", price: 220, desc: "Chikmagalur double espresso pulled with organic Damask rose essence and velvety foam.", img: "assets/hero_dish.jpg" },
+      { id: 2, name: "Spanish Cortado & Dulce Crema", cat: "coffee", price: 210, desc: "Equal parts ristretto and condensed milk micro-foam, dusted with cinnamon bark.", img: "assets/hero_dish.jpg" },
+      { id: 3, name: "18-Hour Hibiscus Cold Brew", cat: "coffee", price: 240, desc: "Cold brew steeped with Egyptian hibiscus petals, berry essence, and tonic.", img: "assets/hero_dish.jpg" },
+      { id: 4, name: "Gourmet Avocado Sourdough Toast", cat: "savory", price: 260, desc: "Artisan sourdough crowned with smashed Haas avocado, cherry tomatoes, and poached egg.", img: "assets/savory.jpg" },
+      { id: 5, name: "Truffle Mushroom Grilled Brioche", cat: "savory", price: 290, desc: "Forest mushrooms sautéed in garlic thyme butter and melted aged cheddar.", img: "assets/savory.jpg" },
+      { id: 6, name: "Lotus Biscoff Burnt Cheesecake", cat: "dessert", price: 280, desc: "Basque cheesecake with a spiced speculoos crust and warm caramel glaze.", img: "assets/dessert.jpg" },
+      { id: 7, name: "Warm Cast Iron Skillet Cookie", cat: "dessert", price: 290, desc: "Oven-baked Belgian dark chocolate chip dough with artisanal vanilla gelato.", img: "assets/hero_dish.jpg" },
+      { id: 8, name: "Belgian Chocolate Ganache Croffle", cat: "dessert", price: 250, desc: "Crispy waffle-pressed croissant glazed in 70% dark Belgian ganache and toasted almonds.", img: "assets/dessert.jpg" }
+    ];
+
+    function renderMenuItems(filter) {
+      const container = document.getElementById('menuItemsContainer');
+      const filtered = filter === 'all' ? menuItems : menuItems.filter(i => i.cat === filter);
+      
+      container.innerHTML = filtered.map(item => `
+        <div class="bg-brandCard border border-white/10 p-3.5 rounded flex items-center gap-4 hover:border-brandCopper/40 transition-colors">
+          <img src="${item.img}" alt="${item.name}" class="w-14 h-14 rounded-full object-cover border border-brandCopper/40 shrink-0">
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h5 class="font-serif font-bold text-sm text-white">${item.name}</h5>
+              <span class="text-brandCopper font-bold text-sm">₹${item.price}</span>
+            </div>
+            <p class="text-brandGrey text-xs mt-1 leading-snug">${item.desc}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openMenuModal() {
+      document.getElementById('menuModal').classList.remove('hidden');
+      renderMenuItems('all');
+    }
+
+    function closeMenuModal() {
+      document.getElementById('menuModal').classList.add('hidden');
+    }
+
+    function filterMenu(cat, btn) {
+      document.querySelectorAll('.menu-tab-btn').forEach(b => {
+        b.classList.remove('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper');
+        b.classList.add('border-white/20', 'text-white');
+      });
+      btn.classList.add('border-brandCopper', 'bg-brandCopper/20', 'text-brandCopper');
+      btn.classList.remove('border-white/20', 'text-white');
+      renderMenuItems(cat);
+    }
+
+    function openStoryModal() {
+      document.getElementById('storyModal').classList.remove('hidden');
+    }
+
+    function closeStoryModal() {
+      document.getElementById('storyModal').classList.add('hidden');
+    }
+  </script>
+
+</body>
+</html>
